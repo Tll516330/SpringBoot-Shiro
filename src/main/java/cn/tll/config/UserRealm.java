@@ -7,7 +7,9 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -28,7 +30,10 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("执行了授权操作doGetAuthorizationInfo");
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        info.addStringPermission("user:add");
+        //获取当前登录的对象
+        Subject subject = SecurityUtils.getSubject();
+        User currentUser = (User) subject.getPrincipal();
+        info.addStringPermission(currentUser.getPerms());
         return info;
     }
 
@@ -48,7 +53,11 @@ public class UserRealm extends AuthorizingRealm {
             //抛出UnknownAccountException异常
         }
 
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        session.setAttribute("loginUser",user);
+
         //密码认证Shiro做  防止密码泄露
-        return new SimpleAuthenticationInfo("",user.getPassword(),"");
+        return new SimpleAuthenticationInfo(user,user.getPassword(),"");
     }
 }

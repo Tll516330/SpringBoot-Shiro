@@ -83,5 +83,13 @@ public class IndexController {
         return "未经授权,不允许访问此页面";
     }
 
+    @RequestMapping("/loginOut")
+    public String loginOut(Model model){
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        model.addAttribute("msg","安全退出");
+        return "login";
+    }
+
 
 }

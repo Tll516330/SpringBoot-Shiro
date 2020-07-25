@@ -1,5 +1,6 @@
 package cn.tll.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -40,6 +41,7 @@ public class ShiroConfig {
         Map<String, String> filterMap = new LinkedHashMap<>();
         //授权，正常的情况下，没有授权会跳转到未授权页面
         filterMap.put("/user/add","perms[user:add]");
+        filterMap.put("/user/update","perms[user:update]");
 
         filterMap.put("/user/*","authc");
 
@@ -70,5 +72,14 @@ public class ShiroConfig {
     @Bean
     public UserRealm userRealm(){
         return new UserRealm();
+    }
+
+    /**
+     * 整合ShiroDialect :用来整合Shiro thymeleaf
+     * @return
+     */
+    @Bean
+    public ShiroDialect getShiroDialect(){
+        return new ShiroDialect();
     }
 }
